@@ -61,8 +61,8 @@ rmw_take_event(
     // cast the event_handle to the appropriate type to get the appropriate
     // status from the handle
     // CustomConnextPublisher and CustomConnextSubscriber should implement this interface
-    opensplice_static_event_info * custom_event_info =
-        static_cast<opensplice_static_event_info *>(event_handle->data);
+    OpenSpliceStaticEventInfo * custom_event_info =
+        static_cast<OpenSpliceStaticEventInfo *>(event_handle->data);
 
     // call get status with the appropriate mask
     // get_status should fill the event with the appropriate status information

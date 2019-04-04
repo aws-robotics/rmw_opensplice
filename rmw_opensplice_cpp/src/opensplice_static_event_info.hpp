@@ -18,7 +18,7 @@
 #include <dcps/C++/SACPP/ccpp.h>
 #include <rmw/ret_types.h>
 
-typedef struct opensplice_static_event_info {
+typedef struct OpenSpliceStaticEventInfo {
   // @brief Get the status for a particular status mask.
   /**
    * Return the corresponding RMW status given the input DDS_StatusMask and its corresponding event.
