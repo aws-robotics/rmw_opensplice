@@ -23,6 +23,7 @@
 
 #include "identifier.hpp"
 #include "types.hpp"
+#include "event_converter.hpp"
 
 extern "C"
 {
@@ -42,22 +43,33 @@ rmw_take_event(
     void * event_info,
     bool * taken)
 {
-  if (!event_handle) {
-    RMW_SET_ERROR_MSG("event handle is null");
-    return RMW_RET_ERROR;
-  }
-  if (!event_info) {
-    RMW_SET_ERROR_MSG("event info is null");
-    return RMW_RET_ERROR;
-  }
-  if (!taken) {
-    RMW_SET_ERROR_MSG("taken argument is null");
-    return RMW_RET_ERROR;
-  }
+  // pointer error checking here
+  RMW_CHECK_ARGUMENT_FOR_NULL(event_handle, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
       event handle,
       event_handle->implementation_identifier, opensplice_cpp_identifier,
       return RMW_RET_ERROR);
-  return RMW_RET_UNSUPPORTED;
+
+  rmw_ret_t ret_code = RMW_RET_UNSUPPORTED;
+
+  // check if we support the input event type
+  if (is_event_supported(event_handle->event_type)) {
+    // lookup status mask from rmw_event_type
+    DDS::StatusKind status_kind = get_status_kind_from_rmw(event_handle->event_type);
+
+    // cast the event_handle to the appropriate type to get the appropriate
+    // status from the handle
+    // CustomConnextPublisher and CustomConnextSubscriber should implement this interface
+    OpenSpliceStaticEventInfo * custom_event_info =
+        static_cast<OpenSpliceStaticEventInfo *>(event_handle->data);
+
+    // call get status with the appropriate mask
+    // get_status should fill the event with the appropriate status information
+    ret_code = custom_event_info->get_status(status_kind, event_info);
+  }
+
+  // if ret_code is not okay, return error and set taken to false.
+  *taken = (ret_code == RMW_RET_OK);
+  return ret_code;
 }
 }  // extern "C"
