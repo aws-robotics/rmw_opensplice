@@ -36,11 +36,13 @@
 #include "rmw/rmw.h"
 #include "rmw/types.h"
 
-#include "identifier.hpp"
-#include "types.hpp"
 #include "event_converter.hpp"
+#include "identifier.hpp"
+#include "opensplice_static_event_info.hpp"
+#include "types.hpp"
 
 #include <unordered_set>
+
 
 // The extern "C" here enforces that overloading is not used.
 extern "C"
@@ -58,7 +60,7 @@ rmw_ret_t __gather_event_conditions(
   // gather all status conditions and masks
   for (size_t i = 0; i < events->event_count; ++i) {
     rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
-    DDS::Entity * dds_entity = static_cast<opensplice_static_event_info *>(
+    DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
         current_event->data)->get_entity();
     if (!dds_entity) {
       RMW_SET_ERROR_MSG("Event handle is null");
@@ -88,7 +90,7 @@ rmw_ret_t __handle_active_event_conditions(rmw_events_t * events)
   if (events) {
     for (size_t i = 0; i < events->event_count; ++i) {
       rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
-      DDS::Entity * dds_entity = static_cast<opensplice_static_event_info *>(
+      DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
           current_event->data)->get_entity();
       if (!dds_entity) {
         RMW_SET_ERROR_MSG("Event handle is null");
