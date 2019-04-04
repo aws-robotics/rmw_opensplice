@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Open Source Robotics Foundation, Inc.
+// Copyright 2019 Open Source Robotics Foundation, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@
 #include <dcps/C++/SACPP/ccpp.h>
 #include <rmw/ret_types.h>
 
-typedef struct OpenSpliceStaticEventInfo {
+typedef struct opensplice_static_event_info {
+  // @brief Get the status for a particular status mask.
   /**
    * Return the corresponding RMW status given the input DDS_StatusMask and its corresponding event.
    * @param mask input DDS_StatusMask
@@ -26,6 +27,11 @@ typedef struct OpenSpliceStaticEventInfo {
    * @return
    */
   virtual rmw_ret_t get_status(const DDS::StatusMask mask, void * event) = 0;
+
+  //@brief Get dds entity for events.
+  /**
+   * @return the entity for which events are retrieved from.
+   */
   virtual DDS::Entity * get_entity() = 0;
 } OpenSpliceStaticEventInfo;
 

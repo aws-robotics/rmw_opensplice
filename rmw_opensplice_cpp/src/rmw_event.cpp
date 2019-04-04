@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Open Source Robotics Foundation, Inc.
+// Copyright 2019 Open Source Robotics Foundation, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 
 extern "C"
 {
+// @brief Take an event from the event handle and store it in event_info.
 /*
  * Take an event from the event handle.
  *
@@ -60,8 +61,8 @@ rmw_take_event(
     // cast the event_handle to the appropriate type to get the appropriate
     // status from the handle
     // CustomConnextPublisher and CustomConnextSubscriber should implement this interface
-    OpenSpliceStaticEventInfo * custom_event_info =
-        static_cast<OpenSpliceStaticEventInfo *>(event_handle->data);
+    opensplice_static_event_info * custom_event_info =
+        static_cast<opensplice_static_event_info *>(event_handle->data);
 
     // call get status with the appropriate mask
     // get_status should fill the event with the appropriate status information

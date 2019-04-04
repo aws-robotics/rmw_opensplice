@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Open Source Robotics Foundation, Inc.
+// Copyright 2019 Open Source Robotics Foundation, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #include <dcps/C++/SACPP/ccpp.h>
 #include <rmw/event.h>
 
-/// @brief Return the corresponding DDS_StatusKind to the input RMW_EVENT
+/// @brief Return the corresponding DDS_StatusKind to the input RMW_EVENT.
 /**
  * @param event_t
  * @return

@@ -45,7 +45,7 @@
 #include "rmw/types.h"
 #include "rosidl_typesupport_opensplice_cpp/message_type_support.h"
 #include "rosidl_typesupport_opensplice_cpp/service_type_support.h"
-#include "OpenSpliceStaticEventInfo.hpp"
+#include "opensplice_static_event_info.hpp"
 
 RMW_LOCAL
 std::string
@@ -200,7 +200,7 @@ private:
   std::atomic<size_t> current_count_;
 };
 
-struct OpenSpliceStaticPublisherInfo : OpenSpliceStaticEventInfo
+struct OpenSpliceStaticPublisherInfo : opensplice_static_event_info
 {
   DDS::Topic * dds_topic;
   DDS::Publisher * dds_publisher;
@@ -242,7 +242,7 @@ private:
   std::atomic<size_t> current_count_;
 };
 
-struct OpenSpliceStaticSubscriberInfo : OpenSpliceStaticEventInfo
+struct OpenSpliceStaticSubscriberInfo : opensplice_static_event_info
 {
   DDS::Topic * dds_topic;
   DDS::Subscriber * dds_subscriber;

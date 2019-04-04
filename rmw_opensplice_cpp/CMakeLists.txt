@@ -45,6 +45,7 @@ ament_export_dependencies(
 link_directories(${OpenSplice_LIBRARY_DIRS})
 add_library(rmw_opensplice_cpp SHARED
   src/demangle.cpp
+  src/event_converter.cpp
   src/identifier.cpp
   src/namespace_prefix.cpp
   src/qos.cpp
@@ -77,7 +78,6 @@ add_library(rmw_opensplice_cpp SHARED
   src/rmw_wait_set.cpp
   src/serialization_format.cpp
   src/types.cpp
-  src/event_converter.cpp
 )
 ament_target_dependencies(rmw_opensplice_cpp
   "rcutils"
