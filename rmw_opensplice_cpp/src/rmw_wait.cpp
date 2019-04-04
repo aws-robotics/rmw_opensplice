@@ -32,15 +32,86 @@
 #include "rmw/allocators.h"
 #include "rmw/error_handling.h"
 #include "rmw/impl/cpp/macros.hpp"
+#include "rmw/event.h"
 #include "rmw/rmw.h"
 #include "rmw/types.h"
 
 #include "identifier.hpp"
 #include "types.hpp"
+#include "event_converter.hpp"
+
+#include <unordered_set>
 
 // The extern "C" here enforces that overloading is not used.
 extern "C"
 {
+rmw_ret_t __gather_event_conditions(
+    rmw_events_t * events,
+    std::unordered_set<DDS::StatusCondition *> & status_conditions)
+{
+
+  if (!events) {
+    RMW_SET_ERROR_MSG("events is null");
+    return RMW_RET_ERROR;
+  }
+
+  // gather all status conditions and masks
+  for (size_t i = 0; i < events->event_count; ++i) {
+    rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
+    DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
+        current_event->data)->get_entity();
+    if (!dds_entity) {
+      RMW_SET_ERROR_MSG("Event handle is null");
+      return RMW_RET_ERROR;
+    }
+    DDS::StatusCondition * status_condition = dds_entity->get_statuscondition();
+    if (!status_condition) {
+      RMW_SET_ERROR_MSG("status condition handle is null");
+      return RMW_RET_ERROR;
+    }
+
+    if(is_event_supported(current_event->event_type)) {
+      // set the status condition's mask with the supported type
+      DDS::StatusMask new_status_mask = status_condition->get_enabled_statuses() |
+          get_status_kind_from_rmw(current_event->event_type);
+      status_condition->set_enabled_statuses(new_status_mask);
+      status_conditions.insert(status_condition);
+    }
+  }
+
+  return RMW_RET_OK;
+}
+
+rmw_ret_t __handle_active_event_conditions(rmw_events_t * events)
+{
+  // enable a status condition for each event
+  if (events) {
+    for (size_t i = 0; i < events->event_count; ++i) {
+      rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
+      DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
+          current_event->data)->get_entity();
+      if (!dds_entity) {
+        RMW_SET_ERROR_MSG("Event handle is null");
+        return RMW_RET_ERROR;
+      }
+
+      DDS::StatusMask status_mask = dds_entity->get_status_changes();
+      bool is_active = false;
+
+      if(is_event_supported(current_event->event_type)) {
+        is_active = static_cast<bool>(status_mask &
+            get_status_kind_from_rmw(current_event->event_type));
+      }
+      // if status condition is not found in the active set
+      // reset the subscriber handle
+      if (!is_active) {
+        events->events[i] = nullptr;
+      }
+    }
+  }
+  return RMW_RET_OK;
+}
+
 rmw_ret_t check_attach_condition_error(DDS::ReturnCode_t retcode)
 {
   if (retcode == DDS::RETCODE_OK) {
@@ -193,6 +264,23 @@ rmw_wait(
         dds_wait_set->attach_condition(read_condition));
       if (status != RMW_RET_OK) {
         return status;
+      }
+    }
+  }
+
+  std::unordered_set<DDS::StatusCondition *> status_conditions;
+  // gather all status conditions with set masks
+  rmw_ret_t ret_code = __gather_event_conditions(events, status_conditions);
+  if (ret_code != RMW_RET_OK) {
+    return ret_code;
+  }
+  if (!status_conditions.empty()) {
+    // enable a status condition for each event
+    for (auto * status_condition : status_conditions) {
+      rmw_ret_t rmw_status = check_attach_condition_error(
+          dds_wait_set->attach_condition(status_condition));
+      if (rmw_status != RMW_RET_OK) {
+        return rmw_status;
       }
     }
   }
@@ -350,7 +438,7 @@ rmw_wait(
       }
       // if service condition is not found in the active set
       // reset the service handle
-      if (!(j < active_conditions->length())) {
+      if (j >= active_conditions->length()) {
         services->services[i] = 0;
       }
       if (dds_wait_set->detach_condition(read_condition) != DDS::RETCODE_OK) {
@@ -384,7 +472,7 @@ rmw_wait(
       }
       // if client condition is not found in the active set
       // reset the client handle
-      if (!(j < active_conditions->length())) {
+      if (j >= active_conditions->length()) {
         clients->clients[i] = 0;
       }
       DDS::ReturnCode_t detach_status = dds_wait_set->detach_condition(read_condition);
