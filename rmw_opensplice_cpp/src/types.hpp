@@ -200,7 +200,7 @@ private:
   std::atomic<size_t> current_count_;
 };
 
-struct OpenSpliceStaticPublisherInfo : OpenSpliceStaticEventInfo
+struct OpenSpliceStaticPublisherInfo : public OpenSpliceStaticEventInfo
 {
   DDS::Topic * dds_topic;
   DDS::Publisher * dds_publisher;
@@ -242,7 +242,7 @@ private:
   std::atomic<size_t> current_count_;
 };
 
-struct OpenSpliceStaticSubscriberInfo : OpenSpliceStaticEventInfo
+struct OpenSpliceStaticSubscriberInfo : public OpenSpliceStaticEventInfo
 {
   DDS::Topic * dds_topic;
   DDS::Subscriber * dds_subscriber;
