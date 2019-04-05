@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <unordered_map>
 #include <unordered_set>
 
 #ifdef __clang__
@@ -56,6 +57,7 @@ rmw_ret_t __gather_event_conditions(
     return RMW_RET_ERROR;
   }
 
+  std::unordered_map<DDS::StatusCondition *, DDS::StatusMask> status_mask_map;
   // gather all status conditions and masks
   for (size_t i = 0; i < events->event_count; ++i) {
     rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
@@ -72,12 +74,17 @@ rmw_ret_t __gather_event_conditions(
     }
 
     if (is_event_supported(current_event->event_type)) {
-      // set the status condition's mask with the supported type
-      DDS::StatusMask new_status_mask = status_condition->get_enabled_statuses() |
+      if (status_mask_map.find(status_condition) == status_mask_map.end()) {
+        status_mask_map[status_condition] = DDS::STATUS_MASK_NONE;
+      }
+      status_mask_map[status_condition] = status_mask_map[status_condition] |
         get_status_kind_from_rmw(current_event->event_type);
-      status_condition->set_enabled_statuses(new_status_mask);
-      status_conditions.insert(status_condition);
     }
+  }
+  for (auto & pair : status_mask_map) {
+    // set the status condition's mask with the supported type
+    pair.first->set_enabled_statuses(pair.second);
+    status_conditions.insert(pair.first);
   }
 
   return RMW_RET_OK;
