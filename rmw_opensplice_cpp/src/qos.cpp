@@ -96,7 +96,9 @@ bool set_entity_qos_from_profile_generic(
       RMW_SET_ERROR_MSG("Unknown QoS liveliness policy");
       return false;
   }
-  if (qos_profile.liveliness_lease_duration.sec != 0 || qos_profile.liveliness_lease_duration.nsec != 0) {
+  if (qos_profile.liveliness_lease_duration.sec != 0 ||
+    qos_profile.liveliness_lease_duration.nsec != 0)
+  {
     entity_qos.liveliness.lease_duration.sec = qos_profile.liveliness_lease_duration.sec;
     entity_qos.liveliness.lease_duration.nanosec = qos_profile.liveliness_lease_duration.nsec;
   }
@@ -120,8 +122,8 @@ bool set_entity_qos_from_profile_generic(
 
 bool
 set_entity_qos_from_profile(
-    const rmw_qos_profile_t & qos_profile,
-    DDS::DataReaderQos& entity_qos)
+  const rmw_qos_profile_t & qos_profile,
+  DDS::DataReaderQos & entity_qos)
 {
   // Set any QoS settings that are specific to DataReader, then call the shared version
   return set_entity_qos_from_profile_generic(qos_profile, entity_qos);
@@ -129,8 +131,8 @@ set_entity_qos_from_profile(
 
 bool
 set_entity_qos_from_profile(
-    const rmw_qos_profile_t & qos_profile,
-    DDS::DataWriterQos& entity_qos)
+  const rmw_qos_profile_t & qos_profile,
+  DDS::DataWriterQos & entity_qos)
 {
   // Set any QoS settings that are specific to DataWriter, then call the shared version
   if (qos_profile.lifespan.sec != 0 || qos_profile.lifespan.nsec != 0) {

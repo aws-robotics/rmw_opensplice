@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RMW_OPENSPLICE_CPP_EVENT_CONVERTER_HPP_
-#define RMW_OPENSPLICE_CPP_EVENT_CONVERTER_HPP_
+#ifndef EVENT_CONVERTER_HPP_
+#define EVENT_CONVERTER_HPP_
 
 #include <dcps/C++/SACPP/ccpp.h>
 #include <rmw/event.h>
@@ -40,4 +40,4 @@ bool is_event_supported(const rmw_event_type_t & event_t);
   */
 rmw_ret_t check_dds_ret_code(DDS::ReturnCode_t & dds_return_code);
 
-#endif  // RMW_OPENSPLICE_CPP_EVENT_CONVERTER_HPP_
+#endif  // EVENT_CONVERTER_HPP_

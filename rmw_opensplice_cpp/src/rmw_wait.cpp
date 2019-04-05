@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <unordered_set>
+
 #ifdef __clang__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wmismatched-tags"
@@ -41,17 +43,14 @@
 #include "opensplice_static_event_info.hpp"
 #include "types.hpp"
 
-#include <unordered_set>
-
 
 // The extern "C" here enforces that overloading is not used.
 extern "C"
 {
 rmw_ret_t __gather_event_conditions(
-    rmw_events_t * events,
-    std::unordered_set<DDS::StatusCondition *> & status_conditions)
+  rmw_events_t * events,
+  std::unordered_set<DDS::StatusCondition *> & status_conditions)
 {
-
   if (!events) {
     RMW_SET_ERROR_MSG("events is null");
     return RMW_RET_ERROR;
@@ -61,7 +60,7 @@ rmw_ret_t __gather_event_conditions(
   for (size_t i = 0; i < events->event_count; ++i) {
     rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
     DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
-        current_event->data)->get_entity();
+      current_event->data)->get_entity();
     if (!dds_entity) {
       RMW_SET_ERROR_MSG("Event handle is null");
       return RMW_RET_ERROR;
@@ -72,10 +71,10 @@ rmw_ret_t __gather_event_conditions(
       return RMW_RET_ERROR;
     }
 
-    if(is_event_supported(current_event->event_type)) {
+    if (is_event_supported(current_event->event_type)) {
       // set the status condition's mask with the supported type
       DDS::StatusMask new_status_mask = status_condition->get_enabled_statuses() |
-          get_status_kind_from_rmw(current_event->event_type);
+        get_status_kind_from_rmw(current_event->event_type);
       status_condition->set_enabled_statuses(new_status_mask);
       status_conditions.insert(status_condition);
     }
@@ -91,7 +90,7 @@ rmw_ret_t __handle_active_event_conditions(rmw_events_t * events)
     for (size_t i = 0; i < events->event_count; ++i) {
       rmw_event_t * current_event = static_cast<rmw_event_t *>(events->events[i]);
       DDS::Entity * dds_entity = static_cast<OpenSpliceStaticEventInfo *>(
-          current_event->data)->get_entity();
+        current_event->data)->get_entity();
       if (!dds_entity) {
         RMW_SET_ERROR_MSG("Event handle is null");
         return RMW_RET_ERROR;
@@ -100,9 +99,9 @@ rmw_ret_t __handle_active_event_conditions(rmw_events_t * events)
       DDS::StatusMask status_mask = dds_entity->get_status_changes();
       bool is_active = false;
 
-      if(is_event_supported(current_event->event_type)) {
+      if (is_event_supported(current_event->event_type)) {
         is_active = static_cast<bool>(status_mask &
-            get_status_kind_from_rmw(current_event->event_type));
+          get_status_kind_from_rmw(current_event->event_type));
       }
       // if status condition is not found in the active set
       // reset the subscriber handle
@@ -280,7 +279,7 @@ rmw_wait(
     // enable a status condition for each event
     for (auto * status_condition : status_conditions) {
       rmw_ret_t rmw_status = check_attach_condition_error(
-          dds_wait_set->attach_condition(status_condition));
+        dds_wait_set->attach_condition(status_condition));
       if (rmw_status != RMW_RET_OK) {
         return rmw_status;
       }

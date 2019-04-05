@@ -40,16 +40,16 @@ extern "C"
  */
 rmw_ret_t
 rmw_take_event(
-    const rmw_event_t * event_handle,
-    void * event_info,
-    bool * taken)
+  const rmw_event_t * event_handle,
+  void * event_info,
+  bool * taken)
 {
   // pointer error checking here
   RMW_CHECK_ARGUMENT_FOR_NULL(event_handle, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
-      event handle,
-      event_handle->implementation_identifier, opensplice_cpp_identifier,
-      return RMW_RET_ERROR);
+    event handle,
+    event_handle->implementation_identifier, opensplice_cpp_identifier,
+    return RMW_RET_ERROR);
 
   rmw_ret_t ret_code = RMW_RET_UNSUPPORTED;
 
@@ -62,7 +62,7 @@ rmw_take_event(
     // status from the handle
     // CustomConnextPublisher and CustomConnextSubscriber should implement this interface
     OpenSpliceStaticEventInfo * custom_event_info =
-        static_cast<OpenSpliceStaticEventInfo *>(event_handle->data);
+      static_cast<OpenSpliceStaticEventInfo *>(event_handle->data);
 
     // call get status with the appropriate mask
     // get_status should fill the event with the appropriate status information

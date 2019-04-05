@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RMW_OPENSPLICE_CPP_OPENSPLICESTATICEVENTINFO_HPP_
-#define RMW_OPENSPLICE_CPP_OPENSPLICESTATICEVENTINFO_HPP_
+#ifndef OPENSPLICE_STATIC_EVENT_INFO_HPP_
+#define OPENSPLICE_STATIC_EVENT_INFO_HPP_
 
 #include <dcps/C++/SACPP/ccpp.h>
 #include <rmw/ret_types.h>
 
-typedef struct OpenSpliceStaticEventInfo {
+typedef struct OpenSpliceStaticEventInfo
+{
   // @brief Get the status for a particular status mask.
   /**
    * Return the corresponding RMW status given the input DDS_StatusMask and its corresponding event.
@@ -28,11 +29,11 @@ typedef struct OpenSpliceStaticEventInfo {
    */
   virtual rmw_ret_t get_status(const DDS::StatusMask mask, void * event) = 0;
 
-  //@brief Get dds entity for events.
+  // @brief Get dds entity for events.
   /**
    * @return the entity for which events are retrieved from.
    */
   virtual DDS::Entity * get_entity() = 0;
 } OpenSpliceStaticEventInfo;
 
-#endif //RMW_OPENSPLICE_CPP_OPENSPLICESTATICEVENTINFO_H
+#endif  // OPENSPLICE_STATIC_EVENT_INFO_HPP_
