@@ -491,6 +491,8 @@ rmw_wait(
     }
   }
 
+  __handle_active_event_conditions(events);
+
   if (status == DDS::RETCODE_TIMEOUT) {
     return RMW_RET_TIMEOUT;
   }
