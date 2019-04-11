@@ -50,6 +50,8 @@ rmw_take_event(
     event handle,
     event_handle->implementation_identifier, opensplice_cpp_identifier,
     return RMW_RET_ERROR);
+  RMW_CHECK_ARGUMENT_FOR_NULL(event_info, RMW_RET_INVALID_ARGUMENT);
+  RMW_CHECK_ARGUMENT_FOR_NULL(taken, RMW_RET_INVALID_ARGUMENT);
 
   rmw_ret_t ret_code = RMW_RET_UNSUPPORTED;
 

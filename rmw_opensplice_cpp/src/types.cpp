@@ -348,6 +348,7 @@ rmw_ret_t OpenSpliceStaticPublisherInfo::get_status(
   const DDS::StatusMask mask,
   void * event)
 {
+  RMW_CHECK_ARGUMENT_FOR_NULL(event, RMW_RET_INVALID_ARGUMENT);
   switch (mask) {
     case DDS::LIVELINESS_LOST_STATUS:
       {

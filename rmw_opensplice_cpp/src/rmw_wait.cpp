@@ -44,18 +44,11 @@
 #include "opensplice_static_event_info.hpp"
 #include "types.hpp"
 
-
-// The extern "C" here enforces that overloading is not used.
-extern "C"
-{
 rmw_ret_t __gather_event_conditions(
   rmw_events_t * events,
   std::unordered_set<DDS::StatusCondition *> & status_conditions)
 {
-  if (!events) {
-    RMW_SET_ERROR_MSG("events is null");
-    return RMW_RET_ERROR;
-  }
+  RMW_CHECK_ARGUMENT_FOR_NULL(events, RMW_RET_INVALID_ARGUMENT);
 
   std::unordered_map<DDS::StatusCondition *, DDS::StatusMask> status_mask_map;
   // gather all status conditions and masks
@@ -120,6 +113,9 @@ rmw_ret_t __handle_active_event_conditions(rmw_events_t * events)
   return RMW_RET_OK;
 }
 
+// The extern "C" here enforces that overloading is not used.
+extern "C"
+{
 rmw_ret_t check_attach_condition_error(DDS::ReturnCode_t retcode)
 {
   if (retcode == DDS::RETCODE_OK) {
