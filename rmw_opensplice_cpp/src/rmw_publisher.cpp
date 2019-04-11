@@ -44,6 +44,7 @@
 #include "identifier.hpp"
 #include "qos.hpp"
 #include "types.hpp"
+#include "event_converter.hpp"
 #include "typesupport_macros.hpp"
 
 using rosidl_typesupport_opensplice_cpp::impl::check_get_default_publisher_qos;
@@ -369,12 +370,11 @@ rmw_publisher_assert_liveliness(const rmw_publisher_t * publisher)
     return RMW_RET_ERROR;
   }
 
-  if (info->topic_writer->assert_liveliness() != DDS::RETCODE_OK) {
+  rmw_ret_t result = check_dds_ret_code(info->topic_writer->assert_liveliness());
+  if (RMW_RET_OK != result) {
     RMW_SET_ERROR_MSG("failed to assert liveliness of datawriter");
-    return RMW_RET_ERROR;
   }
-
-  return RMW_RET_OK;
+  return result;
 }
 
 rmw_ret_t

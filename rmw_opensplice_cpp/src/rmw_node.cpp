@@ -37,6 +37,7 @@
 
 #include "identifier.hpp"
 #include "types.hpp"
+#include "event_converter.hpp"
 
 // The extern "C" here enforces that overloading is not used.
 extern "C"
@@ -433,12 +434,11 @@ rmw_node_assert_liveliness(const rmw_node_t * node)
     return RMW_RET_ERROR;
   }
 
-  if (node_info->participant->assert_liveliness() != DDS::RETCODE_OK) {
+  rmw_ret_t result = check_dds_ret_code(node_info->participant->assert_liveliness());
+  if (RMW_RET_OK != result) {
     RMW_SET_ERROR_MSG("failed to assert liveliness of participant");
-    return RMW_RET_ERROR;
   }
-
-  return RMW_RET_OK;
+  return result;
 }
 
 const rmw_guard_condition_t *
